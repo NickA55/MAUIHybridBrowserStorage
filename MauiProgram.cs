@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Blazored.LocalStorage;
+using Microsoft.Extensions.Logging;
 
 namespace MAUIHybridBrowserStorage;
 
@@ -15,6 +16,11 @@ public static class MauiProgram
 			});
 
 		builder.Services.AddMauiBlazorWebView();
+		
+		// Add the Blazored.LocalStorage service
+		builder.Services.AddBlazoredLocalStorage();
+
+		
 
 #if DEBUG
 		builder.Services.AddBlazorWebViewDeveloperTools();

@@ -1,5 +1,65 @@
 ﻿@page "/"
 
-<h1>Hello, world!</h1>
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 
-Welcome to your new app.
+<h3 class="text-center">Shopping List</h3>
+
+@if(ShoppingListItems != null)
+{
+    <div class="container">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var item in ShoppingListItems)
+                {
+                    <tr>
+                        <td>@item</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <br />
+        <div class="text-center">
+            <button class="btn btn-danger" @onclick="DeleteAllItems">Delete List</button>
+        </div>
+    </div>
+} else 
+{
+    <p class="text-center mt-3">No items in the list.  Click the Add Items button</p>
+    <div class="text-center">
+        <button @onclick="AddItems" class="btn btn-primary">Add Items</button>
+    </div>
+}
+
+@code 
+{
+    List<string>? ShoppingListItems;
+    protected override async Task OnInitializedAsync()
+    {
+        // Check local storage for any items
+        ShoppingListItems = await localStorage.GetItemAsync<List<string>>("list-items");
+    }
+
+    private async Task AddItems()
+    {
+        string[] items = {"Lettuce", "Roasted Turkey Lunch Meat", "Nutty Buddy", "Iced Tea", "Frozen Pizza", "Dog Fooo"};
+
+        ShoppingListItems = items.ToList();
+
+        // Save to local storage
+        await localStorage.SetItemAsync("list-items", items);
+    }
+
+    private async Task DeleteAllItems()
+    {
+        // Remove the key
+        await localStorage.RemoveItemAsync("list-items");
+
+        // Reset the Shopping List
+        ShoppingListItems = await localStorage.GetItemAsync<List<string>>("list-items");
+    }
+}
